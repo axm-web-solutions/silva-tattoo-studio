@@ -1,12 +1,66 @@
-import { RefObject } from 'react';
-import { Instagram, Phone, Mail, MapPin, Clock } from 'lucide-react';
+import { RefObject, useState } from 'react';
+import { Instagram, Phone, Mail, MapPin, Clock, CalendarClock } from 'lucide-react';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 import { Section } from '@/components/layout/Section';
 import { siteData } from '@/data/siteData';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
 
 export const ContactSection = () => {
   const { ref, isVisible } = useScrollAnimation();
+  const [selectedDate, setSelectedDate] = useState<Date>();
+  const [selectedTime, setSelectedTime] = useState('');
+  const [name, setName] = useState('');
+  const [idea, setIdea] = useState('');
+  const [error, setError] = useState<string | null>(null);
+
+  const phoneNumber = siteData.artist.whatsapp.replace(/[^0-9]/g, '');
+
+  const timeOptions = [
+    '10:00 AM',
+    '11:00 AM',
+    '12:00 PM',
+    '1:00 PM',
+    '2:00 PM',
+    '3:00 PM',
+    '4:00 PM',
+    '5:00 PM',
+    '6:00 PM',
+    '7:00 PM',
+    '8:00 PM',
+  ];
+
+  const handleBooking = () => {
+    if (!selectedDate || !selectedTime) {
+      setError('Selecciona la fecha y la hora para continuar.');
+      return;
+    }
+
+    setError(null);
+    const formattedDate = format(selectedDate, "dd 'de' MMMM yyyy", { locale: es });
+    const clientName = name.trim() || 'Cliente';
+    const ideaText = idea.trim() || 'Tema a definir';
+
+    const message = encodeURIComponent(
+      `Hola, soy ${clientName}. Quisiera agendar una cita para tatuaje el ${formattedDate} a las ${selectedTime}. Detalles: ${ideaText}.`
+    );
+
+    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+  };
 
   const contactInfo = [
     {
@@ -31,7 +85,7 @@ export const ContactSection = () => {
       icon: MapPin,
       label: 'Ubicación',
       value: siteData.artist.location,
-      href: 'https://maps.google.com/?q=Bogota,Colombia',
+      href: `https://maps.google.com/?q=${encodeURIComponent(siteData.artist.location)}`,
     },
   ];
 
@@ -59,30 +113,116 @@ export const ContactSection = () => {
           </p>
         </div>
 
-        {/* Main CTA */}
+        {/* Booking Form */}
         <div
           className={cn(
-            'max-w-3xl mx-auto text-center mb-16 transition-all duration-700',
+            'max-w-4xl mx-auto mb-16 transition-all duration-700',
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           )}
         >
-          <div className="bg-card border border-border p-8 md:p-12">
-            <h3 className="font-display text-2xl md:text-3xl text-foreground mb-4">
-              {siteData.cta.title}
-            </h3>
-            <p className="font-body text-muted-foreground mb-8">
-              {siteData.cta.subtitle}
-            </p>
-            <a
-              href={`https://wa.me/${siteData.artist.whatsapp.replace(/[^0-9]/g, '')}?text=Hola!%20Me%20gustaría%20agendar%20una%20cita%20para%20un%20tatuaje.`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative inline-flex items-center gap-3 px-10 py-5 bg-primary text-primary-foreground font-display text-sm tracking-wider uppercase overflow-hidden transition-all duration-500 hover:shadow-[0_0_50px_hsl(38_92%_50%/0.5)]"
+          <div className="bg-card border border-border p-8 md:p-10">
+            <div className="flex items-start gap-3 mb-6">
+              <CalendarClock className="w-6 h-6 text-primary mt-1" />
+              <div>
+                <h3 className="font-display text-2xl md:text-3xl text-foreground mb-2">
+                  Agenda tu cita
+                </h3>
+                <p className="font-body text-muted-foreground">
+                  Selecciona fecha y hora, y finaliza la reserva directamente en WhatsApp.
+                </p>
+              </div>
+            </div>
+
+            <form
+              className="grid gap-6 md:grid-cols-2"
+              onSubmit={(event) => {
+                event.preventDefault();
+                handleBooking();
+              }}
             >
-              <Phone className="w-5 h-5" />
-              <span className="relative z-10">{siteData.cta.buttonText}</span>
-              <div className="absolute inset-0 bg-gold-light transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
-            </a>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="name">Nombre</Label>
+                <Input
+                  id="name"
+                  placeholder="Tu nombre"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label>Fecha</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        'justify-start text-left font-body',
+                        !selectedDate && 'text-muted-foreground'
+                      )}
+                    >
+                      <CalendarClock className="mr-2 h-4 w-4" />
+                      {selectedDate
+                        ? format(selectedDate, "PPP", { locale: es })
+                        : 'Selecciona una fecha'}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={setSelectedDate}
+                      locale={es}
+                      disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label>Hora</Label>
+                <Select value={selectedTime} onValueChange={setSelectedTime}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Elige un horario" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {timeOptions.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="idea">Idea o estilo</Label>
+                <Textarea
+                  id="idea"
+                  placeholder="Describe el estilo o referencia (opcional)"
+                  rows={4}
+                  value={idea}
+                  onChange={(event) => setIdea(event.target.value)}
+                />
+              </div>
+
+              {error && (
+                <p className="md:col-span-2 text-sm text-destructive">{error}</p>
+              )}
+
+              <div className="md:col-span-2 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <p className="text-sm text-muted-foreground">
+                  Al reservar serás dirigido a WhatsApp:{" "}
+                  <span className="text-foreground font-medium">{siteData.artist.whatsapp}</span>
+                </p>
+                <Button type="submit" className="group relative px-8 py-3">
+                  <Phone className="w-4 h-4 mr-2" />
+                  Reservar por WhatsApp
+                  <span className="absolute inset-0 -z-10 bg-gold-light scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500" />
+                </Button>
+              </div>
+            </form>
           </div>
         </div>
 

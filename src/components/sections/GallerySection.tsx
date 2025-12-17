@@ -2,31 +2,69 @@ import { useState, RefObject } from 'react';
 import { Section } from '@/components/layout/Section';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { cn } from '@/lib/utils';
+import { siteData } from '@/data/siteData';
 
-// Import gallery images
-import tattoo1 from '@/assets/gallery/tattoo-1.jpg';
-import tattoo2 from '@/assets/gallery/tattoo-2.jpg';
-import tattoo3 from '@/assets/gallery/tattoo-3.jpg';
-import tattoo4 from '@/assets/gallery/tattoo-4.jpg';
-import tattoo5 from '@/assets/gallery/tattoo-5.jpg';
-import tattoo6 from '@/assets/gallery/tattoo-6.jpg';
+// Import gallery images (local fallback assets)
+import photoKoala from '@/assets/584401492_18543347149053207_6067807685082180606_n.jpg';
+import photoTigre from '@/assets/553355396_18529682662053207_8862047222774952765_n.jpg';
+import photoRetratoBrazo from '@/assets/521166430_18516595282053207_231837085593717906_n.jpg';
+import photoRetratoPecho from '@/assets/581593899_18541521277053207_3036185750695272176_n.jpg';
 
-const galleryItems = [
-  { id: 1, src: tattoo1, category: 'realismo', title: 'Retrato de León' },
-  { id: 2, src: tattoo2, category: 'blackwork', title: 'Mandala Geométrica' },
-  { id: 3, src: tattoo3, category: 'linea-fina', title: 'Rosa Delicada' },
-  { id: 4, src: tattoo4, category: 'realismo', title: 'Lobo Salvaje' },
-  { id: 5, src: tattoo5, category: 'blackwork', title: 'Geometría Sagrada' },
-  { id: 6, src: tattoo6, category: 'lettering', title: 'Script Elegante' },
+const localImages: Record<number, string> = {
+  1: photoRetratoBrazo,
+  2: photoRetratoPecho,
+  3: photoKoala,
+  4: photoTigre,
+  5: photoRetratoBrazo,
+  6: photoRetratoPecho,
+  7: photoKoala,
+  8: photoTigre,
+  9: photoRetratoBrazo,
+  10: photoRetratoPecho,
+};
+
+// Default fallback items (shown if no data is provided)
+const defaultGallery = [
+  { id: 1, category: 'realismo', title: 'Retrato realista', alt: 'Tatuaje realista de retrato', imageUrl: '' },
+  { id: 2, category: 'realismo', title: 'Retrato realista pecho', alt: 'Tatuaje realista en pecho', imageUrl: '' },
+  { id: 3, category: 'realismo', title: 'Koala y rana', alt: 'Tatuaje realista de koala y rana', imageUrl: '' },
+  { id: 4, category: 'blackwork', title: 'Tigre blackwork', alt: 'Tatuaje tigre blackwork', imageUrl: '' },
 ];
 
-const categories = [
-  { id: 'todos', label: 'Todos' },
-  { id: 'realismo', label: 'Realismo' },
-  { id: 'blackwork', label: 'Blackwork' },
-  { id: 'linea-fina', label: 'Línea Fina' },
-  { id: 'lettering', label: 'Lettering' },
-];
+const sourceItems = siteData.galleryImages?.length ? siteData.galleryImages : defaultGallery;
+
+const galleryItems = sourceItems.map((item, index) => {
+  const fallbackId = item.id ?? index + 1;
+  const src =
+    item.imageUrl && item.imageUrl.trim().length > 0
+      ? item.imageUrl
+      : localImages[fallbackId] ?? localImages[1];
+
+  return {
+    id: fallbackId,
+    src,
+    category: item.category ?? 'otros',
+    title: item.title ?? item.alt ?? 'Tatuaje',
+    alt: item.alt ?? item.title ?? 'Tatuaje',
+  };
+});
+
+const uniqueCategories = Array.from(
+  new Set(galleryItems.map((item) => item.category || 'otros'))
+);
+
+const categories =
+  uniqueCategories.length === 0
+    ? [{ id: 'todos', label: 'Todos' }]
+    : [
+        { id: 'todos', label: 'Todos' },
+        ...uniqueCategories.map((cat) => ({
+          id: cat,
+          label: cat
+            .replace(/-/g, ' ')
+            .replace(/^\w/, (c) => c.toUpperCase()),
+        })),
+      ];
 
 export const GallerySection = () => {
   const [activeCategory, setActiveCategory] = useState('todos');

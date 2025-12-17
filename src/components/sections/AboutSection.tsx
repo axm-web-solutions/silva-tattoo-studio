@@ -3,7 +3,7 @@ import { Section } from '@/components/layout/Section';
 import { siteData } from '@/data/siteData';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { cn } from '@/lib/utils';
-import tattoo5 from '@/assets/gallery/tattoo-5.jpg';
+import aboutPhoto from '@/assets/521166430_18516595282053207_231837085593717906_n.jpg';
 
 export const AboutSection = () => {
   const { ref, isVisible } = useScrollAnimation();
@@ -26,7 +26,7 @@ export const AboutSection = () => {
             )}
           >
             <img
-              src={tattoo5}
+              src={aboutPhoto}
               alt="Silva Tattoo Artist"
               className="w-full h-full object-cover"
             />

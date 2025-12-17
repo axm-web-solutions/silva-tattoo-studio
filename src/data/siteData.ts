@@ -4,11 +4,11 @@ export const siteData = {
     name: "Silva Tattoo",
     tagline: "Arte en tu piel",
     description: "Artista tatuador profesional especializado en realismo, blackwork y diseños personalizados. Transformando ideas en obras de arte permanentes.",
-    location: "Bogotá, Colombia",
+    location: "Colombia",
     experience: "8+ años de experiencia",
     instagram: "@_silvatattoo",
     instagramUrl: "https://www.instagram.com/_silvatattoo/",
-    whatsapp: "+57 300 123 4567",
+    whatsapp: "+57 300 3508267",
     email: "contacto@silvatattoo.com",
   },
   
@@ -71,7 +71,7 @@ export const siteData = {
     paragraphs: [
       "Desde pequeño, el arte fue mi forma de expresión. Comencé dibujando en cualquier superficie disponible, y con el tiempo, descubrí que la piel era el lienzo perfecto para crear obras que cuentan historias.",
       "Después de años de formación y práctica, he desarrollado un estilo único que combina técnicas tradicionales con enfoques contemporáneos. Cada tatuaje que realizo es una colaboración entre tu visión y mi arte.",
-      "Mi estudio en Bogotá está diseñado para ofrecerte una experiencia cómoda y segura. Utilizo solo materiales de la más alta calidad y sigo estrictos protocolos de higiene.",
+      "Mi estudio en Colombia está diseñado para ofrecerte una experiencia cómoda y segura. Utilizo solo materiales de la más alta calidad y sigo estrictos protocolos de higiene.",
     ],
   },
   
@@ -83,7 +83,7 @@ export const siteData = {
   
   footer: {
     copyright: "© 2024 Silva Tattoo. Todos los derechos reservados.",
-    location: "Bogotá, Colombia",
+    location: "Colombia",
   },
 };
 
@@ -92,31 +92,43 @@ export const galleryImages = [
   {
     id: 1,
     category: "realismo",
+    title: "Retrato realista",
     alt: "Tatuaje realista de retrato",
+    imageUrl: "https://scontent.cdninstagram.com/v/t51.82787-15/521166430_18516595282053207_231837085593717906_n.jpg?stp=dst-jpegr_e35_tt6&_nc_cat=107&ig_cache_key=MzY3OTAzNTUzOTQ5NjE3Nzk3NQ%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjE0NDB4MTkyMC5oZHIuQzMifQ%3D%3D&_nc_ohc=GCsrQsGPAuUQ7kNvwGoKW3a&_nc_oc=AdkKUKh030xSqUg2UxEMn6RtQTFD2NlqsI1NmjyXgUyK-CvzM4gI2mAu7VJuNSH6EvQ&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&_nc_gid=1qlbpWF9i-b693nO8S3Nww&oh=00_AfnLzW1rLkTWKz3S2vdCyYc4HIUrz4t-Ow37isI6naBYBw&oe=69480283",
   },
   {
     id: 2,
-    category: "blackwork",
-    alt: "Tatuaje blackwork geométrico",
-  },
-  {
-    id: 3,
     category: "linea-fina",
-    alt: "Tatuaje de línea fina floral",
+    title: "Detalle línea fina",
+    alt: "Tatuaje línea fina",
+    imageUrl: "https://scontent.cdninstagram.com/v/t51.82787-15/581593899_18541521277053207_3036185750695272176_n.jpg?stp=dst-jpegr_e35_p320x320_tt6&_nc_cat=101&ig_cache_key=Mzc2NTMwMTExNDU1Njc3NDYzMw%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjE0NDB4MTkyMC5oZHIuQzMifQ%3D%3D&_nc_ohc=jRtxgErmCoMQ7kNvwEUexho&_nc_oc=AdnADYjG1mIwFUaSkqstNbLSJxalGyLHRXfe7As1EOp_aLtnBfaQOL5J6avpaU8KMko&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&_nc_gid=1qlbpWF9i-b693nO8S3Nww&oh=00_AfmzxxzryKPZOIh5M7IedpY0AbqwAFeh7PGLqtHA2lKutg&oe=694825CF",
   },
   {
-    id: 4,
+    id: 7,
     category: "realismo",
-    alt: "Tatuaje realista de animal",
+    title: "Koala y rana",
+    alt: "Tatuaje realista de koala y rana",
+    imageUrl: "",
   },
   {
-    id: 5,
+    id: 8,
     category: "blackwork",
-    alt: "Tatuaje blackwork mandala",
+    title: "Tigre blackwork",
+    alt: "Tatuaje tigre blackwork",
+    imageUrl: "",
   },
   {
-    id: 6,
-    category: "lettering",
-    alt: "Tatuaje lettering script",
+    id: 9,
+    category: "realismo",
+    title: "Retrato realista brazo",
+    alt: "Tatuaje realista de retrato en brazo",
+    imageUrl: "",
+  },
+  {
+    id: 10,
+    category: "realismo",
+    title: "Retrato realista pecho",
+    alt: "Tatuaje realista en pecho",
+    imageUrl: "",
   },
 ];
