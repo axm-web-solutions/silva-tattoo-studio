@@ -1,9 +1,8 @@
 import { RefObject, useState } from 'react';
 import { Instagram, Phone, Mail, MapPin, Clock, CalendarClock } from 'lucide-react';
 import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { es, enUS, fr } from 'date-fns/locale';
 import { Section } from '@/components/layout/Section';
-import { siteData } from '@/data/siteData';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -19,16 +18,19 @@ import {
 } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
+import { useI18n } from '@/i18n/context';
 
 export const ContactSection = () => {
   const { ref, isVisible } = useScrollAnimation();
+  const { copy, locale } = useI18n();
+  const { site, ui } = copy;
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState('');
   const [name, setName] = useState('');
   const [idea, setIdea] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  const phoneNumber = siteData.artist.whatsapp.replace(/[^0-9]/g, '');
+  const phoneNumber = site.artist.whatsapp.replace(/[^0-9]/g, '');
 
   const timeOptions = [
     '10:00 AM',
@@ -44,48 +46,64 @@ export const ContactSection = () => {
     '8:00 PM',
   ];
 
+  const localeMap = {
+    es,
+    en: enUS,
+    fr,
+  } as const;
+
   const handleBooking = () => {
     if (!selectedDate || !selectedTime) {
-      setError('Selecciona la fecha y la hora para continuar.');
+      setError(ui.contact.errorRequired);
       return;
     }
 
     setError(null);
-    const formattedDate = format(selectedDate, "dd 'de' MMMM yyyy", { locale: es });
-    const clientName = name.trim() || 'Cliente';
-    const ideaText = idea.trim() || 'Tema a definir';
+    const formattedDate = format(selectedDate, 'PPP', { locale: localeMap[locale] });
+    const clientName = name.trim() || site.artist.name;
+    const ideaText = idea.trim() || ui.contact.ideaLabel;
 
-    const message = encodeURIComponent(
-      `Hola, soy ${clientName}. Quisiera agendar una cita para tatuaje el ${formattedDate} a las ${selectedTime}. Detalles: ${ideaText}.`
-    );
+    const template = ui.contact.whatsappTemplate
+      .replace("{name}", clientName)
+      .replace("{date}", formattedDate)
+      .replace("{time}", selectedTime)
+      .replace("{idea}", ideaText);
+
+    const message = encodeURIComponent(template);
 
     window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+  };
+
+  const contactLabels: Record<typeof locale, { whatsapp: string; email: string; instagram: string; location: string }> = {
+    es: { whatsapp: 'WhatsApp', email: 'Email', instagram: 'Instagram', location: 'Ubicación' },
+    en: { whatsapp: 'WhatsApp', email: 'Email', instagram: 'Instagram', location: 'Location' },
+    fr: { whatsapp: 'WhatsApp', email: 'Email', instagram: 'Instagram', location: 'Localisation' },
   };
 
   const contactInfo = [
     {
       icon: Phone,
-      label: 'WhatsApp',
-      value: siteData.artist.whatsapp,
-      href: `https://wa.me/${siteData.artist.whatsapp.replace(/[^0-9]/g, '')}`,
+      label: contactLabels[locale].whatsapp,
+      value: site.artist.whatsapp,
+      href: `https://wa.me/${site.artist.whatsapp.replace(/[^0-9]/g, '')}`,
     },
     {
       icon: Mail,
-      label: 'Email',
-      value: siteData.artist.email,
-      href: `mailto:${siteData.artist.email}`,
+      label: contactLabels[locale].email,
+      value: site.artist.email,
+      href: `mailto:${site.artist.email}`,
     },
     {
       icon: Instagram,
-      label: 'Instagram',
-      value: siteData.artist.instagram,
-      href: siteData.artist.instagramUrl,
+      label: contactLabels[locale].instagram,
+      value: site.artist.instagram,
+      href: site.artist.instagramUrl,
     },
     {
       icon: MapPin,
-      label: 'Ubicación',
-      value: siteData.artist.location,
-      href: `https://maps.google.com/?q=${encodeURIComponent(siteData.artist.location)}`,
+      label: contactLabels[locale].location,
+      value: site.artist.location,
+      href: `https://maps.google.com/?q=${encodeURIComponent(site.artist.location)}`,
     },
   ];
 
@@ -102,14 +120,14 @@ export const ContactSection = () => {
         {/* Section Header */}
         <div className="text-center mb-16">
           <p className="font-body text-primary tracking-[0.3em] uppercase mb-4">
-            Hablemos
+            {ui.contact.eyebrow}
           </p>
           <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground mb-6">
-            Contacto
+            {ui.contact.title}
           </h2>
           <div className="w-24 h-0.5 bg-gradient-gold mx-auto mb-6" />
           <p className="font-body text-lg text-muted-foreground max-w-2xl mx-auto">
-            ¿Tienes una idea en mente? Me encantaría escucharla. Agenda tu consulta gratuita.
+            {ui.contact.description}
           </p>
         </div>
 
@@ -125,10 +143,10 @@ export const ContactSection = () => {
               <CalendarClock className="w-6 h-6 text-primary mt-1" />
               <div>
                 <h3 className="font-display text-2xl md:text-3xl text-foreground mb-2">
-                  Agenda tu cita
+                  {ui.contact.bookingTitle}
                 </h3>
                 <p className="font-body text-muted-foreground">
-                  Selecciona fecha y hora, y finaliza la reserva directamente en WhatsApp.
+                  {ui.contact.bookingSubtitle}
                 </p>
               </div>
             </div>
@@ -141,17 +159,17 @@ export const ContactSection = () => {
               }}
             >
               <div className="flex flex-col gap-2">
-                <Label htmlFor="name">Nombre</Label>
+                <Label htmlFor="name">{ui.contact.nameLabel}</Label>
                 <Input
                   id="name"
-                  placeholder="Tu nombre"
+                  placeholder={ui.contact.nameLabel}
                   value={name}
                   onChange={(event) => setName(event.target.value)}
                 />
               </div>
 
               <div className="flex flex-col gap-2">
-                <Label>Fecha</Label>
+                <Label>{ui.contact.dateLabel}</Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
@@ -163,8 +181,8 @@ export const ContactSection = () => {
                     >
                       <CalendarClock className="mr-2 h-4 w-4" />
                       {selectedDate
-                        ? format(selectedDate, "PPP", { locale: es })
-                        : 'Selecciona una fecha'}
+                        ? format(selectedDate, "PPP", { locale: localeMap[locale] })
+                        : ui.contact.dateLabel}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="p-0" align="start">
@@ -181,10 +199,10 @@ export const ContactSection = () => {
               </div>
 
               <div className="flex flex-col gap-2">
-                <Label>Hora</Label>
+                <Label>{ui.contact.timeLabel}</Label>
                 <Select value={selectedTime} onValueChange={setSelectedTime}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Elige un horario" />
+                    <SelectValue placeholder={ui.contact.timeLabel} />
                   </SelectTrigger>
                   <SelectContent>
                     {timeOptions.map((option) => (
@@ -197,10 +215,10 @@ export const ContactSection = () => {
               </div>
 
               <div className="flex flex-col gap-2">
-                <Label htmlFor="idea">Idea o estilo</Label>
+                <Label htmlFor="idea">{ui.contact.ideaLabel}</Label>
                 <Textarea
                   id="idea"
-                  placeholder="Describe el estilo o referencia (opcional)"
+                  placeholder={ui.contact.ideaPlaceholder}
                   rows={4}
                   value={idea}
                   onChange={(event) => setIdea(event.target.value)}
@@ -213,12 +231,12 @@ export const ContactSection = () => {
 
               <div className="md:col-span-2 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <p className="text-sm text-muted-foreground">
-                  Al reservar serás dirigido a WhatsApp:{" "}
-                  <span className="text-foreground font-medium">{siteData.artist.whatsapp}</span>
+                  {ui.contact.disclaimer}{" "}
+                  <span className="text-foreground font-medium">{site.artist.whatsapp}</span>
                 </p>
                 <Button type="submit" className="group relative px-8 py-3">
                   <Phone className="w-4 h-4 mr-2" />
-                  Reservar por WhatsApp
+                  {ui.contact.reserveButton}
                   <span className="absolute inset-0 -z-10 bg-gold-light scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500" />
                 </Button>
               </div>
@@ -261,7 +279,7 @@ export const ContactSection = () => {
           <div className="inline-flex items-center gap-3 text-muted-foreground">
             <Clock className="w-5 h-5" />
             <p className="font-body">
-              Lunes - Sábado: 10:00 AM - 8:00 PM | Citas con previa reserva
+              {ui.contact.hours}
             </p>
           </div>
         </div>

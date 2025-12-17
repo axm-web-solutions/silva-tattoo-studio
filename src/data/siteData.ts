@@ -10,6 +10,7 @@ export const siteData = {
     instagramUrl: "https://www.instagram.com/_silvatattoo/",
     whatsapp: "+57 300 3508267",
     email: "contacto@silvatattoo.com",
+    logoAlt: "Silva Tattoo logo",
   },
   
   navigation: [

@@ -3,6 +3,7 @@ import { Section } from '@/components/layout/Section';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { cn } from '@/lib/utils';
 import { siteData } from '@/data/siteData';
+import { useI18n } from '@/i18n/context';
 
 // Import gallery images (local fallback assets)
 import photoKoala from '@/assets/584401492_18543347149053207_6067807685082180606_n.jpg';
@@ -70,6 +71,8 @@ export const GallerySection = () => {
   const [activeCategory, setActiveCategory] = useState('todos');
   const [selectedImage, setSelectedImage] = useState<typeof galleryItems[0] | null>(null);
   const { ref, isVisible } = useScrollAnimation();
+  const { copy } = useI18n();
+  const { ui } = copy;
 
   const filteredItems = activeCategory === 'todos' 
     ? galleryItems 
@@ -80,10 +83,10 @@ export const GallerySection = () => {
       {/* Section Header */}
       <div ref={ref as RefObject<HTMLDivElement>} className="text-center mb-12">
         <p className="font-body text-primary tracking-[0.3em] uppercase mb-4">
-          Mi Trabajo
+          {ui.gallery.eyebrow}
         </p>
         <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground mb-6">
-          Galería
+          {ui.gallery.title}
         </h2>
         <div className="w-24 h-0.5 bg-gradient-gold mx-auto" />
       </div>
@@ -101,7 +104,7 @@ export const GallerySection = () => {
                 : 'bg-transparent text-muted-foreground border border-border hover:border-primary hover:text-primary'
             )}
           >
-            {cat.label}
+            {ui.gallery.filters[cat.id as keyof typeof ui.gallery.filters] ?? cat.label}
           </button>
         ))}
       </div>

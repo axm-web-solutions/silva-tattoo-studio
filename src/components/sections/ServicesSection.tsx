@@ -1,9 +1,9 @@
 import { RefObject } from 'react';
 import { Eye, Palette, Pen, Layers, Sparkles, Type, LucideIcon } from 'lucide-react';
 import { Section } from '@/components/layout/Section';
-import { siteData } from '@/data/siteData';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/context';
 
 const iconMap: Record<string, LucideIcon> = {
   Eye,
@@ -16,26 +16,28 @@ const iconMap: Record<string, LucideIcon> = {
 
 export const ServicesSection = () => {
   const { ref, isVisible } = useScrollAnimation();
+  const { copy } = useI18n();
+  const { site, ui } = copy;
 
   return (
     <Section id="servicios" className="py-20 bg-background">
       {/* Section Header */}
       <div ref={ref as RefObject<HTMLDivElement>} className="text-center mb-16">
         <p className="font-body text-primary tracking-[0.3em] uppercase mb-4">
-          Especialidades
+          {ui.services.eyebrow}
         </p>
         <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground mb-6">
-          Servicios
+          {ui.services.title}
         </h2>
         <div className="w-24 h-0.5 bg-gradient-gold mx-auto mb-6" />
         <p className="font-body text-lg text-muted-foreground max-w-2xl mx-auto">
-          Cada estilo tiene su propia magia. Descubre cuál resuena contigo.
+          {ui.services.description}
         </p>
       </div>
 
       {/* Services Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {siteData.services.map((service, index) => {
+        {site.services.map((service, index) => {
           const IconComponent = iconMap[service.icon];
           
           return (
@@ -75,7 +77,7 @@ export const ServicesSection = () => {
 
       {/* Stats */}
       <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8">
-        {siteData.stats.map((stat, index) => (
+        {site.stats.map((stat, index) => (
           <div
             key={index}
             className={cn(

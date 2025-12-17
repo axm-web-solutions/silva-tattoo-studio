@@ -1,12 +1,14 @@
 import { RefObject } from 'react';
 import { Section } from '@/components/layout/Section';
-import { siteData } from '@/data/siteData';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { cn } from '@/lib/utils';
 import aboutPhoto from '@/assets/521166430_18516595282053207_231837085593717906_n.jpg';
+import { useI18n } from '@/i18n/context';
 
 export const AboutSection = () => {
   const { ref, isVisible } = useScrollAnimation();
+  const { copy } = useI18n();
+  const { site, ui } = copy;
 
   return (
     <Section id="sobre-mi" className="py-20 bg-smoke relative overflow-hidden">
@@ -49,14 +51,14 @@ export const AboutSection = () => {
             )}
           >
             <p className="font-body text-primary tracking-[0.3em] uppercase mb-4">
-              Conóceme
+              {ui.about.eyebrow}
             </p>
             <h2 className="font-display text-4xl md:text-5xl text-foreground mb-8">
-              {siteData.about.title}
+              {site.about.title}
             </h2>
 
             <div className="space-y-6">
-              {siteData.about.paragraphs.map((paragraph, index) => (
+              {site.about.paragraphs.map((paragraph, index) => (
                 <p
                   key={index}
                   className="font-body text-lg text-muted-foreground leading-relaxed"
@@ -72,7 +74,7 @@ export const AboutSection = () => {
                 Silva
               </p>
               <p className="font-body text-muted-foreground">
-                Artista Tatuador · {siteData.artist.location}
+                Artista Tatuador · {site.artist.location}
               </p>
             </div>
           </div>
